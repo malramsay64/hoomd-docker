@@ -1,21 +1,22 @@
 hoomd-docker
 ============
 
-A docker container with a [hoomd] install that supports
-running on the GPU, assuming CUDA is installed on the host.
-This uses the recommended install using `conda`.
+A docker container with a [hoomd] install that supports MPI. It is built
+with the default options
 
-Running
--------
+```dockerfile
+ARG HOOMD_VERSION="v2.3.4"
+ARG CUDA=off
+ARG MPI=on
+ARG TBB=off
+ARG JIT=off
+ARG TEST=off
+ARG PYTHON=/usr/bin/python36
+```
 
-To run the container with GPU acceleration use the command
+These options can be modified at build time by passing arguments to
+`--build-arg`.
 
-    docker run -ti -v $(pwd):/srv/scratch malramsay/hoomd
-
-which will mount the current directory at `/srv/scratch` and
-open a shell in which commands can be run.
-
-To get GPU support the `nvidia-docker` commands needs to be used in place of `docker`.
+This is a minimal container designed to be extended on by other containers.
 
 [hoomd](https://glotzerlab.engin.umich.edu/hoomd-blue/)
-

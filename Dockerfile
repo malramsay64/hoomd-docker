@@ -1,20 +1,40 @@
-FROM nvidia/cuda:7.5-centos7
+FROM centos:7
 
-RUN yum -y update &&\
-    yum -y install wget git bzip2 &&\
-    yum clean all
+RUN yum install -y epel-release && \
+    yum install -y \
+    clang \
+    gcc-c++ \
+    make \
+    cmake \
+    curl \
+    git \
+    tar \
+    gzip \
+    sqlite3-devel \
+    mpich-devel \
+    python36-devel && \
+    yum clean all && \
+    rm -rf /var/cache/yum
 
-RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-3.16.0-Linux-x86_64.sh -O ~/miniconda.sh &&\
-    bash ~/miniconda.sh -b -p /opt/conda && \
-    rm ~/miniconda.sh
+# Add mpi library to path
+# This is the same as running `module load mpi` since the `module` command doesn't work.
+ENV PATH="/usr/lib64/mpich/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/usr/lib64/mpich/lib"
 
-RUN export PATH=/opt/conda/bin:$PATH && \
-    conda config --add channels glotzer &&\
-    conda install -y hoomd &&\
-    conda clean --all
-
-ENV PATH /opt/conda/bin:$PATH
-
-CMD /bin/bash
-
-
+ARG HOOMD_VERSION="v2.3.4"
+RUN curl -sSLO https://glotzerlab.engin.umich.edu/Downloads/hoomd/hoomd-$HOOMD_VERSION.tar.gz && \
+    tar -xzf hoomd-$HOOMD_VERSION.tar.gz -C /root && \
+    cd /root/hoomd-$HOOMD_VERSION && \
+    mkdir build && \
+    cd build && \
+    cmake ../ \
+        -DENABLE_CUDA=off \
+        -DENABLE_MPI=on \
+        -DENABLE_TBB=off \
+        -DBUILD_JIT=off \
+        -DBUILD_TESTING=off \
+        -DPYTHON_EXECUTABLE=/usr/bin/python3.6 && \
+    make && \
+    make install && \
+    rm -rf /root/hoomd-$HOOMD_VERSION && \
+    rm /hoomd-$HOOMD_VERSION.tar.gz
