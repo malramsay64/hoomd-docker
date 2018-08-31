@@ -6,14 +6,14 @@ services:
   - docker
 
 install:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker pull "$DOCKER_USERNAME"/hoomd-core:latest
 
 jobs:
   include:
     - stage: core
       script:
-        - docker build -t "$DOCKER_USERNAME"/hoomd-core core
-        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker build -t "$DOCKER_USERNAME"/hoomd-core --cache-from "$DOCKER_USERNAME"/hoomd-core:latest core
         - |
           if [ "$TRAVIS_TAG" ]; then
             docker tag "$DOCKER_USERNAME"/hoomd-core "$DOCKER_USERNAME"/hoomd-core:"$TRAVIS_TAG"
