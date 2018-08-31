@@ -6,19 +6,22 @@ services:
   - docker
 
 install:
-  - docker pull malramsay/hoomd-core
+  - docker pull malramsay/hoomd-core:latest
 
 jobs:
   include:
     - stage: core
-      script: docker build -t malramsay/hoomd-core core
-    - stage: hoomd
-      script: docker build -t malramsay/hoomd .
-    - stage: test
-      script: docker run malramsay/hoomd python36 -c "import hoomd"
+      script:
+        - docker build -t malramsay/hoomd-core core
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - |
+          if [ "$TRAVIS_TAG" ]; then
+            docker tag "$DOCKER_USERNAME"/hoomd-core "$DOCKER_USERNAME"/hoomd-core:$TRAVIS_TAG
+          fi
+        - docker push "$DOCKER_USERNAME"/hoomd-core
 
-deploy:
-  provider: script
-  script: ./docker_push
-  on:
-    branch: master
+    - stage: hoomd
+      script:
+        - docker build -t "$DOCKER_USERNAME"/hoomd .
+        - docker run "$DOCKER_USERNAME"/hoomd python36 -c "import hoomd"
+        - docker push "$DOCKER_USERNAME"/hoomd
