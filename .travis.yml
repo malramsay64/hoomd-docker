@@ -6,13 +6,19 @@ services:
   - docker
 
 install:
-  - docker build -t malramsay/hoomd .
+  - docker pull malramsay/hoomd-core
 
-script:
-  - docker run malramsay/hoomd
+jobs:
+  include:
+    - stage: core
+      script: docker build -t malramsay/hoomd-core core
+    - stage: hoomd
+      script: docker build -t malramsay/hoomd .
+    - stage: test
+      script: docker run malramsay/hoomd python36 -c "import hoomd"
 
 deploy:
   provider: script
-  script: bash docker_push
+  script: ./docker_push
   on:
     branch: master

@@ -7,6 +7,8 @@
 #
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 if $TRAVIS_TAG; then
-    docker tag malramsay/hoomd-core:$TRAVIS_TAG
+    docker tag malramsay/hoomd-core malramsay/hoomd-core:$TRAVIS_TAG
+    docker tag malramsay/hoomd malramsay/hoomd:$TRAVIS_TAG
 fi
 docker push malramsay/hoomd-core
+docker push malramsay/hoomd
