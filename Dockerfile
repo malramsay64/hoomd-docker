@@ -12,7 +12,8 @@ RUN yum install -y epel-release && \
     gzip \
     sqlite3-devel \
     mpich-devel \
-    python36-devel && \
+    python36-devel \
+    python36-numpy && \
     yum clean all && \
     rm -rf /var/cache/yum
 
