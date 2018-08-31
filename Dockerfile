@@ -42,7 +42,9 @@ RUN curl -sSLO https://glotzerlab.engin.umich.edu/Downloads/hoomd/hoomd-$HOOMD_V
         -DENABLE_TBB=$TBB \
         -DBUILD_JIT=$JIT \
         -DBUILD_TESTING=$TEST \
-        -DPYTHON_EXECUTABLE=$PYTHON && \
+        -DPYTHON_EXECUTABLE=$PYTHON \
+        -DCMAKE_INSTALL_PREFIX=`$PYTHON -c "import site; print(site.getsitepackages()[0])` && \
+
     make && \
     make install && \
     rm -rf /root/hoomd-$HOOMD_VERSION && \
