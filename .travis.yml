@@ -6,17 +6,17 @@ services:
   - docker
 
 install:
-  - docker pull malramsay/hoomd-core:latest
+  - docker pull "$DOCKER_USERNAME"/hoomd-core:latest
 
 jobs:
   include:
     - stage: core
       script:
-        - docker build -t malramsay/hoomd-core core
+        - docker build -t "$DOCKER_USERNAME"/hoomd-core core
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - |
           if [ "$TRAVIS_TAG" ]; then
-            docker tag "$DOCKER_USERNAME"/hoomd-core "$DOCKER_USERNAME"/hoomd-core:$TRAVIS_TAG
+            docker tag "$DOCKER_USERNAME"/hoomd-core "$DOCKER_USERNAME"/hoomd-core:"$TRAVIS_TAG"
           fi
         - docker push "$DOCKER_USERNAME"/hoomd-core
 
