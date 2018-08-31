@@ -21,19 +21,28 @@ RUN yum install -y epel-release && \
 ENV PATH="/usr/lib64/mpich/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/lib64/mpich/lib"
 
+# These are the arguments for the build phase, change them here.
+# By specifying these as arguments it is possible to
 ARG HOOMD_VERSION="v2.3.4"
+ARG CUDA=off
+ARG MPI=on
+ARG TBB=off
+ARG JIT=off
+ARG TEST=off
+ARG PYTHON=/usr/bin/python36
+
 RUN curl -sSLO https://glotzerlab.engin.umich.edu/Downloads/hoomd/hoomd-$HOOMD_VERSION.tar.gz && \
     tar -xzf hoomd-$HOOMD_VERSION.tar.gz -C /root && \
     cd /root/hoomd-$HOOMD_VERSION && \
     mkdir build && \
     cd build && \
     cmake ../ \
-        -DENABLE_CUDA=off \
-        -DENABLE_MPI=on \
-        -DENABLE_TBB=off \
-        -DBUILD_JIT=off \
-        -DBUILD_TESTING=off \
-        -DPYTHON_EXECUTABLE=/usr/bin/python3.6 && \
+        -DENABLE_CUDA=$CUDA \
+        -DENABLE_MPI=$MPI \
+        -DENABLE_TBB=$TBB \
+        -DBUILD_JIT=$JIT \
+        -DBUILD_TESTING=$TEST \
+        -DPYTHON_EXECUTABLE=$PYTHON && \
     make && \
     make install && \
     rm -rf /root/hoomd-$HOOMD_VERSION && \
