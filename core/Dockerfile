@@ -1,20 +1,4 @@
-FROM centos:7.5.1804
-
-RUN yum install -y epel-release && \
-    yum install -y \
-    clang \
-    gcc-c++ \
-    make \
-    cmake \
-    curl \
-    git \
-    tar \
-    gzip \
-    sqlite3-devel \
-    mpich-devel \
-    python36-devel && \
-    yum clean all && \
-    rm -rf /var/cache/yum
+FROM malramsay/hoomd-base:latest
 
 # Add mpi library to path
 # This is the same as running `module load mpi` since the `module` command doesn't work.
