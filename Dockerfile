@@ -1,4 +1,4 @@
-FROM malramsay/hoomd-core
+FROM malramsay/hoomd-core:2.3.4
 
 ARG PIP=18.0
 ARG NUMPY=1.14.5
